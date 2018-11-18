@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import demoPanels.DefaultPanel;
+import demoPanels.DispersePanel;
 import util.AnimationPanel;
 import util.GamePanel;
 
@@ -39,6 +42,13 @@ public class GUI {
 				return new Dimension(super.getPreferredSize().width, 30);
 			}
 		};
+		selection.add(new SwitcherButton("Disperse Particle", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				replaceContent("Click, drag, and release!", new DispersePanel().start());
+			}
+		}));
+		
 		JButton button0 = new JButton("Placeholder 0");
 		button0.setFocusable(false);
 		selection.add(button0);
