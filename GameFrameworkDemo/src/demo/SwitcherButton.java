@@ -16,6 +16,7 @@ import javax.swing.JButton;
 public class SwitcherButton extends JButton {
 	public SwitcherButton(String txt, ActionListener al) {
 		super(txt);
+		setFocusable(false);
 		addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {

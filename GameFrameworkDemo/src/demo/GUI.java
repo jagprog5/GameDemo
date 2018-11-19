@@ -17,6 +17,8 @@ import javax.swing.SwingConstants;
 
 import demoPanels.DefaultPanel;
 import demoPanels.DispersePanel;
+import demoPanels.DotSimulator;
+import demoPanels.MouseKeyInputDisplay;
 import util.AnimationPanel;
 import util.GamePanel;
 
@@ -28,7 +30,7 @@ public class GUI {
 	public GUI() {
 		JFrame frame = new JFrame();
 		frame.setTitle("Simple Game Mechanics Demo");
-		frame.setSize(new Dimension(700, 400));
+		frame.setSize(new Dimension(700, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		centerFrame(frame);
 		frame.getContentPane().setLayout(new BorderLayout());
@@ -42,22 +44,32 @@ public class GUI {
 				return new Dimension(super.getPreferredSize().width, 30);
 			}
 		};
-		selection.add(new SwitcherButton("Disperse Particle", new ActionListener() {
+		
+		selection.add(new SwitcherButton("Mouse & Key Input", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				replaceContent("Try the mouse buttons, scroll wheel, and keyboard.", new MouseKeyInputDisplay().start());
+			}
+		}));
+		
+		selection.add(new SwitcherButton("Dispersion Particle", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				replaceContent("Click, drag, and release!", new DispersePanel().start());
 			}
 		}));
 		
+		selection.add(new SwitcherButton("Dot Sim", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				replaceContent("Sit back, and watch!", new DotSimulator().start());
+			}
+		}));
+		
 		JButton button0 = new JButton("Placeholder 0");
 		button0.setFocusable(false);
 		selection.add(button0);
-		JButton button = new JButton("Placeholder 1");
-		button.setFocusable(false);
-		selection.add(button);
-		JButton button2 = new JButton("Placeholder 2");
-		button2.setFocusable(false);
-		selection.add(button2);
+		
 		// With GridLayout, buttons will be added on same row and expand width.
 		selection.setLayout(new GridLayout());
 
@@ -77,7 +89,7 @@ public class GUI {
 		frame.getContentPane().add(contentPanel);
 
 		// Start by showing the default panel.
-		replaceContent("Description Text Here", new DefaultPanel());
+		replaceContent("", new DefaultPanel());
 
 		frame.setVisible(true);
 	}

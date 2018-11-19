@@ -2,6 +2,8 @@ package util;
 
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -26,7 +28,7 @@ import javax.swing.SwingUtilities;
  * @author John Giorshev
  */
 public abstract class GamePanel extends AnimationPanel
-		implements KeyListener, MouseListener, MouseWheelListener, MouseMotionListener {
+		implements KeyListener, MouseListener, MouseWheelListener, MouseMotionListener, FocusListener {
 	private boolean keyReleased;
 
 	// Character lists should only contain unique elements.
@@ -53,12 +55,14 @@ public abstract class GamePanel extends AnimationPanel
 		addMouseListener(this);
 		addMouseWheelListener(this);
 		addMouseMotionListener(this);
+		addFocusListener(this);
 		setFocusable(true);
 
 		// charsDown is a list of all simple characters that are currently being
 		// pressed.
 		// w, W, etc.
-		// By "simple key codes", I mean codes 32 to 126.
+		// Simple characters are all character that have a lower-case or upper-case
+		// equivalent on the keyboard
 		charsDown = new HashSet<Character>();
 
 		// keyCodesDown is a list of all non-simple key-codes that are currently
@@ -66,6 +70,165 @@ public abstract class GamePanel extends AnimationPanel
 		// This is used for arrow keys, etc.
 		// Simple key codes will no appear in this.
 		keyCodesDown = new HashSet<Integer>();
+	}
+	
+	/**
+	 * @return True if any key is being pressed
+	 */
+	public boolean keyPressed() {
+		return keyCodesDown.size() > 0 || charsDown.size() > 0;
+	}
+
+	/**
+	 * @return HashSet containing all "simple characters" that are currently being
+	 *         pressed down on the keyboard.<br>
+	 *         Simple characters are all character that have a lower-case or
+	 *         upper-case equivalent on the keyboard.<br>
+	 *         Examples: 'w', 'W', '2', '@', '`', '='<br>
+	 *         If the array is always blank, make sure this component has focus.
+	 * @see #keyCodesDown()
+	 */
+	public HashSet<Character> charsDown() {
+		return charsDown;
+	}
+
+	/**
+	 * @return HashSet of key codes for all non-simple characters that are currently
+	 *         being pressed down on the keyboard<br>
+	 *         Examples: Arrow keys, backspace, ctrl, alt.<br>
+	 *         Example: keyCodesDown.contains(KeyEvent.VK_UP)
+	 *         
+	 * @see #charsDown()
+	 */
+	public HashSet<Integer> keyCodesDown() {
+		return keyCodesDown;
+	}
+
+	/**
+	 * @param c
+	 *            Character to check.
+	 * @return True if the character is currently being pressed.
+	 * @see #keyCodesDownContains(int)
+	 */
+	public boolean charsDownContains(char c) {
+		return charsDown.contains(c);
+	}
+
+	/**
+	 * @param c
+	 *            Characters to check.
+	 * @return True if any of the characters are currently being pressed. Note that
+	 *         this function will only work for simple characters.
+	 * @see #keyCodesDownContains(int[])
+	 */
+	public boolean charsDownContains(Character[] c) {
+		for (char ch : c) {
+			if (charsDownContains(ch)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param i
+	 *            KeyCode to check.
+	 * @return True if the key for the KeyCode is being pressed.
+	 * @see #charsDownContains(char)
+	 */
+	public boolean keyCodesDownContains(int i) {
+		return keyCodesDown.contains(i);
+	}
+
+	/**
+	 * @param i
+	 *            KeyCodes to check.
+	 * @return True if any of the KeyCodes corresponding keys are being pressed.
+	 * @see #charsDownContains(char[])
+	 */
+	public boolean keyCodesDownContains(int[] is) {
+		for (int i : is) {
+			if (keyCodesDownContains(i)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return If any key was released since the previous frame.
+	 */
+	public boolean keyReleased() {
+		return keyReleased;
+	}
+
+	// Updating mouse xy values.
+
+	/**
+	 * @return The X value of the mouse position.
+	 */
+	public int getMouseX() {
+		return lastMouseX;
+	}
+
+	/**
+	 * @return The Y value of the mouse position in the last mouse event received by
+	 *         this panel.
+	 */
+	public int getMouseY() {
+		return lastMouseY;
+	}
+	
+	/**
+	 * @return If mouse button 1 is currently being pressed.
+	 */
+	public boolean leftMousePressed() {
+		return leftMousePressed;
+	}
+
+	/**
+	 * @return If mouse button 1 was released since the previous frame.
+	 */
+	public boolean leftMouseReleased() {
+		return leftMouseReleased;
+	}
+
+	/**
+	 * @return If mouse button 1 was not pressed, then pressed since the previous
+	 *         frame.
+	 */
+	public boolean leftMouseJustPressed() {
+		return leftMouseJustPressed;
+	}
+
+	/**
+	 * @return If mouse button 3 is currently being pressed.
+	 */
+	public boolean rightMousePressed() {
+		return rightMousePressed;
+	}
+
+	/**
+	 * @return If mouse button 3 was released since the previous frame.
+	 */
+	public boolean rightMouseReleased() {
+		return rightMouseReleased;
+	}
+
+	/**
+	 * @return If mouse button 3 was not pressed, then pressed since the previous
+	 *         frame.
+	 */
+	public boolean rightMouseJustPressed() {
+		return rightMouseJustPressed;
+	}
+	
+	/**
+	 * @return The change in mouseWheel since the last frame.<br>
+	 * This value is generally -1, 0, or 1.
+	 */
+	public int getMouseWheelChange() {
+		return mouseWheelChange;
 	}
 
 	@Override
@@ -101,23 +264,18 @@ public abstract class GamePanel extends AnimationPanel
 	public void keyPressed(KeyEvent ke) {
 		// Shift key needs to be processed before modifyCapsIfNeeded,
 		// since modifyCapsIfNeeded is based on the state of the shift key
-		boolean flag = ke.getKeyCode() == KeyEvent.VK_SHIFT;
-		if (flag)
+		if (ke.getKeyCode() == KeyEvent.VK_SHIFT)
 			keyCodesDown.add(ke.getKeyCode());
 		modifyCapsIfNeeded();
 
-		Character c;
-		if (capsNeeded()) {
-			c = toUpperCase(ke.getKeyChar());
-		} else {
-			c = toLowerCase(ke.getKeyChar());
-		}
+		Character c = ke.getKeyChar();
+
 		// exclude from charsDown all characters that aren't simple.
 		// Note: HashSet can't have duplicates. No need to check if character already
 		// contained
-		if (ke.getKeyCode() > 31 && ke.getKeyCode() < 127) {
+		if (Character.isLetter(c) || LNAKE.contains(c) || CNAKE.contains(c)) {
 			charsDown.add(c);
-		} else if (!flag) { // don't add shift key again. It was already processed
+		} else {
 			keyCodesDown.add(ke.getKeyCode());
 		}
 	}
@@ -125,8 +283,8 @@ public abstract class GamePanel extends AnimationPanel
 	@Override
 	public void keyReleased(KeyEvent ke) {
 		keyReleased = true;
-		Character c;
-		if (capsNeeded()) {
+		Character c = ke.getKeyChar();
+		if (capsUsed()) {
 			c = toUpperCase(ke.getKeyChar());
 		} else {
 			c = toLowerCase(ke.getKeyChar());
@@ -217,13 +375,13 @@ public abstract class GamePanel extends AnimationPanel
 	 *         not function if this instance is paused, since the shift key state is
 	 *         updated with the game-loop.
 	 */
-	protected boolean capsNeeded() {
+	public boolean capsUsed() {
 		return Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK) != keyCodesDown
 				.contains(KeyEvent.VK_SHIFT);
 	}
 
 	// Assumes character is already lower-case if no upper-case equivalent exists.
-	private Character toLowerCase(Character c) {
+	private static Character toLowerCase(Character c) {
 		if (Character.isUpperCase(c)) {
 			return Character.toLowerCase(c);
 		}
@@ -234,7 +392,7 @@ public abstract class GamePanel extends AnimationPanel
 	}
 
 	// Assumes character is already upper-case if no lower-case equivalent exists.
-	private Character toUpperCase(Character c) {
+	private static Character toUpperCase(Character c) {
 		if (Character.isLowerCase(c)) {
 			return Character.toUpperCase(c);
 		}
@@ -249,10 +407,12 @@ public abstract class GamePanel extends AnimationPanel
 	// keyboard shift state
 	// Prevents sticking keys from messing with caps lock and shift, etc.
 	private void modifyCapsIfNeeded() {
-		boolean capsNeeded = capsNeeded();
+		boolean capsNeeded = capsUsed();
 		if (lastCapsState != capsNeeded) {
 			lastCapsState = capsNeeded;
-			for (Character c : charsDown) {
+			// Requires iterating through charsDown while adding and removing elements.
+			// Separate list with order is required to prevent concurrent modification
+			for (Character c : new ArrayList<Character>(charsDown)) {
 				if (capsNeeded) {
 					Character newChar = toUpperCase(c);
 					if (newChar != c) {
@@ -270,111 +430,6 @@ public abstract class GamePanel extends AnimationPanel
 		}
 	}
 
-	/**
-	 * @return True if any key is being pressed
-	 */
-	public boolean keyPressed() {
-		return keyCodesDown.size() > 0;
-	}
-
-	/**
-	 * @return HashSet containing all "simple characters" that are currently being
-	 *         pressed down on the keyboard.<br>
-	 *         Simple characters include key codes 32 to 126, like 0-9, A-z,
-	 *         brackets, etc.<br>
-	 *         If the array is always blank, make sure this component has focus.
-	 * @see #keyCodesDown()
-	 */
-	public HashSet<Character> charsDown() {
-		return charsDown;
-	}
-
-	/**
-	 * @return HashSet of key codes for all non-simple characters that are currently
-	 *         being pressed down on the keyboard (INCLUDING arrow keys, escape,
-	 *         control, etc.).<br>
-	 *         Note that the
-	 * @see #charsDown()
-	 */
-	public HashSet<Integer> keyCodesDown() {
-		return keyCodesDown;
-	}
-
-	/**
-	 * @param c
-	 *            Character to check.
-	 * @return True if the character is currently being pressed.
-	 * @see #keyCodesDownContains(int)
-	 */
-	public boolean charsDownContains(char c) {
-		return charsDown.contains(c);
-	}
-
-	/**
-	 * @param c
-	 *            Characters to check.
-	 * @return True if any of the characters are currently being pressed. Note that
-	 *         this function will only work for simple characters (codes 32 to 126).
-	 * @see #keyCodesDownContains(int[])
-	 */
-	public boolean charsDownContains(Character[] c) {
-		for (char ch : c) {
-			if (charsDownContains(ch)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @param i
-	 *            KeyCode to check.
-	 * @return True if the key for the KeyCode is being pressed.
-	 * @see #charsDownContains(char)
-	 */
-	public boolean keyCodesDownContains(int i) {
-		return keyCodesDown.contains(i);
-	}
-
-	/**
-	 * @param i
-	 *            KeyCodes to check.
-	 * @return True if any of the KeyCodes corresponding keys are being pressed.
-	 * @see #charsDownContains(char[])
-	 */
-	public boolean keyCodesDownContains(int[] is) {
-		for (int i : is) {
-			if (keyCodesDownContains(i)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @return If any key was released since the previous frame.
-	 */
-	public boolean keyReleased() {
-		return keyReleased;
-	}
-
-	// Updating mouse xy values.
-
-	/**
-	 * @return The X value of the mouse position.
-	 */
-	public int getMouseX() {
-		return lastMouseX;
-	}
-
-	/**
-	 * @return The Y value of the mouse position in the last mouse event received by
-	 *         this panel.
-	 */
-	public int getMouseY() {
-		return lastMouseY;
-	}
-
 	private void storePoint(MouseEvent me) {
 		lastMouseX = me.getX();
 		lastMouseY = me.getY();
@@ -382,12 +437,10 @@ public abstract class GamePanel extends AnimationPanel
 
 	@Override
 	public void mouseEntered(MouseEvent me) {
-		storePoint(me);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent me) {
-		storePoint(me);
 	}
 
 	@Override
@@ -426,62 +479,11 @@ public abstract class GamePanel extends AnimationPanel
 		}
 	}
 
-	/**
-	 * @return If mouse button 1 is currently being pressed.
-	 */
-	public boolean leftMousePressed() {
-		return leftMousePressed;
-	}
-
-	/**
-	 * @return If mouse button 1 was released since the previous frame.
-	 */
-	public boolean leftMouseReleased() {
-		return leftMouseReleased;
-	}
-
-	/**
-	 * @return If mouse button 1 was not pressed, then pressed since the previous
-	 *         frame.
-	 */
-	public boolean leftMouseJustPressed() {
-		return leftMouseJustPressed;
-	}
-
-	/**
-	 * @return If mouse button 3 is currently being pressed.
-	 */
-	public boolean rightMousePressed() {
-		return rightMousePressed;
-	}
-
-	/**
-	 * @return If mouse button 3 was released since the previous frame.
-	 */
-	public boolean rightMouseReleased() {
-		return rightMouseReleased;
-	}
-
-	/**
-	 * @return If mouse button 3 was not pressed, then pressed since the previous
-	 *         frame.
-	 */
-	public boolean rightMouseJustPressed() {
-		return rightMouseJustPressed;
-	}
-
 	// MouseWheelListener stuff
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent mwe) {
 		mouseWheelChange = mwe.getWheelRotation();
-	}
-
-	/**
-	 * @return The change in mouseWheel since the last frame.
-	 */
-	public int getMouseWheelChange() {
-		return mouseWheelChange;
 	}
 
 	@Override
@@ -492,6 +494,19 @@ public abstract class GamePanel extends AnimationPanel
 	@Override
 	public void keyTyped(KeyEvent ke) {
 
+	}
+
+	//If focus is gained or lost, clear keys. Prevents sticking when leaving panel.
+	@Override
+	public void focusGained(FocusEvent e) {
+		charsDown.clear();
+		keyCodesDown.clear();
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		charsDown.clear();
+		keyCodesDown.clear();
 	}
 
 }

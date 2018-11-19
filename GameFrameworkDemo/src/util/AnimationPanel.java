@@ -14,14 +14,14 @@ import javax.swing.Timer;
 
 /**
  * AnimationPanel acts as a constantly updating and drawing JPanel.
- * Acts as a small time step simulation.
+ * Can be used for small time step simulation, which has graphics but no user input.
  * Note: This does not include mouse of keyboard input.
  * @author John Giorshev
  */
 public abstract class AnimationPanel extends JPanel implements ActionListener {
 	private ArrayList<AffineTransform> transformationStack;
 	private int frameCount;
-	private int millisDelay = 16;
+	private int millisDelay = 15;
 	private Timer timer;
 
 	// More conventional game loops gave no noticeable differences.

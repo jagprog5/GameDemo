@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 public class DefaultPanel extends JPanel {
 	public DefaultPanel() {
 		setLayout(new BorderLayout());
+		setBackground(Color.BLACK);
 		JLabel message = new JLabel("Select a demo to begin.", SwingConstants.CENTER);
 		message.setFont(new Font("sans-serif", Font.PLAIN, 50));
 		message.setForeground(Color.LIGHT_GRAY);
