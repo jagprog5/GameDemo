@@ -181,10 +181,10 @@ public class GameDemo extends GamePanel {
 		prevPlayerY = playerY;
 	}
 
-	public static final Image FIREBALL = Images.getImage(Images.FIREBALL);
-	public static final Image FACE = Images.getImage(Images.FACE);
-	public static final Image HOTFIREBALL = Images.getImage(Images.HOTFIREBALL);
-	public static final Image FACEHURT = Images.getImage(Images.FACEHURT);
+	public static final Image FIREBALL = Images.getImage(Images.PLASMA);
+	public static final Image FACE = Images.getImage(Images.BOSS);
+	public static final Image HOTFIREBALL = Images.getImage(Images.CHARGINGPLASMA);
+	public static final Image FACEHURT = Images.getImage(Images.CHARGINGBOSS);
 
 	class BossPart extends GraphicalObject {
 		public static final int SIZEMIN = 5;
