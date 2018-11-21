@@ -2,8 +2,9 @@ package demoPanels;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.util.ArrayList;
+
+import javax.swing.SwingUtilities;
 
 import util.GamePanel;
 import util.GraphicalObject;
@@ -17,6 +18,12 @@ public class DispersePanel extends GamePanel {
 		setBackground(Color.BLACK);
 		particles = new ArrayList<GraphicalObject>();
 		setTimerDelay(15);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Disperse.giveSize(getSize());
+			}
+		});
 	}
 
 	public boolean startPlotted() {
@@ -31,7 +38,7 @@ public class DispersePanel extends GamePanel {
 		}
 		if (leftMouseReleased() && startPlotted()) {
 			particles.add(
-					new Disperse(startX, startY, (getMouseX() - startX) / 10, (getMouseY() - startY) / 10, particles));
+					new Disperse(startX, startY, (getMouseX() - startX) / 20, (getMouseY() - startY) / 20, particles));
 			startX = null;
 			startY = null;
 		}

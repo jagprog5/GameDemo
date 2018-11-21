@@ -2,6 +2,7 @@ package demoPanels;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
@@ -17,15 +18,16 @@ public class DotSimulator extends AnimationPanel {
 	public DotSimulator() {
 		setBackground(new Color(0f, 0f, 0f, 0.05f));
 		dots = new ArrayList<Dot>();
-		int size = (int) GameMath.nextFloat(5, 10);
+		int size = (int) GameMath.nextFloat(10, 15);//5, 10);
 
 		// size only obtained after panel is added.
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				setBackground(Color.black);
 				for (int i = 0; i < size; i++) {
 					dots.add(new Dot(GameMath.nextFloat(0, getWidth()), GameMath.nextFloat(0, getHeight()),
-							GameMath.nextFloat(-1, 1), GameMath.nextFloat(-1, 1)));
+							GameMath.nextFloat(-40, 40), GameMath.nextFloat(-40, 40)));
 				}
 			}
 
@@ -73,32 +75,35 @@ public class DotSimulator extends AnimationPanel {
 				}
 			}
 
-			float[] deaden = GameMath.projectileSpeed(getX(), getY(), getWidth() / 2f, getHeight() / 2f, 0.01f);
+			//slight pull towards center
+			float[] deaden = GameMath.projectileSpeed(getX(), getY(), getWidth() / 2f, getHeight() / 2f, 0.1f);
 			setDX(getDX() + deaden[0]);
 			setDY(getDY() + deaden[1]);
 
-			// deaden speed in a way that encourages bouncing on both x and y despite screen
-			// width and height ratio
+			// Deaden velocity when bounding off wall.
+			//It was actually quite hard to find a way of making the
+			//simulator never fall into any equilibrium. This works,
+			//and keeps it deterministic after start conditions set.
 			updatePosition();
 			if (getX() > getWidth()) {
 				setX(getWidth());
-				setDX(-Math.abs(getDX() * 0.9f));
-				setDY(getDY() * 1.05f);
+				setDX(-Math.abs(getDX()*0.9f));
+				setDY(getDY() * 0.9f);
 			}
 			if (getX() < 0) {
 				setX(0);
 				setDX(Math.abs(getDX() * 0.9f));
-				setDY(getDY() * 1.05f);
+				setDY(getDY() * 0.9f);
 			}
 			if (getY() > getHeight()) {
 				setY(getHeight());
 				setDY(-Math.abs(getDY() * 0.9f));
-				setDX(getDX() * 1.05f);
+				setDX(getDX() * 0.9f);
 			}
 			if (getY() < 0) {
 				setY(0);
 				setDY(Math.abs(getDY() * 0.9f));
-				setDX(getDX() * 1.05f);
+				setDX(getDX() * 0.9f);
 			}
 		}
 
@@ -108,6 +113,5 @@ public class DotSimulator extends AnimationPanel {
 			g2d.setColor(new Color(gradient, 1 - gradient, 0f));
 			g2d.fill(new Ellipse2D.Float(getX() - size / 2, getY() - size / 2, size, size));
 		}
-
 	}
 }

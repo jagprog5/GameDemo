@@ -9,7 +9,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +17,7 @@ import javax.swing.SwingConstants;
 import demoPanels.DefaultPanel;
 import demoPanels.DispersePanel;
 import demoPanels.DotSimulator;
+import demoPanels.GameDemo;
 import demoPanels.MouseKeyInputDisplay;
 import util.AnimationPanel;
 import util.GamePanel;
@@ -30,7 +30,8 @@ public class GUI {
 	public GUI() {
 		JFrame frame = new JFrame();
 		frame.setTitle("Simple Game Mechanics Demo");
-		frame.setSize(new Dimension(700, 500));
+		frame.setSize(new Dimension(800, 600));
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		centerFrame(frame);
 		frame.getContentPane().setLayout(new BorderLayout());
@@ -66,9 +67,12 @@ public class GUI {
 			}
 		}));
 		
-		JButton button0 = new JButton("Placeholder 0");
-		button0.setFocusable(false);
-		selection.add(button0);
+		selection.add(new SwitcherButton("Game Demo", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				replaceContent("Mouse to move; WASD or arrow keys to shoot.", new GameDemo().start());
+			}
+		}));
 		
 		// With GridLayout, buttons will be added on same row and expand width.
 		selection.setLayout(new GridLayout());

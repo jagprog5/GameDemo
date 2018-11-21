@@ -13,6 +13,13 @@ public abstract class GraphicalObject {
 	private FloatListener dx;
 	private FloatListener dy;
 	
+	/**
+	 * @deprecated If using this constructor, make sure to set properties manually!
+	 */
+	public GraphicalObject() {
+		
+	}
+	
 	public GraphicalObject(float x, float y, float dx, float dy) {
 		this(new FloatListener() {
 			@Override
