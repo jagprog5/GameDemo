@@ -89,7 +89,7 @@ public class GameDemo extends GamePanel {
 			bossCenterY = sumY / sizeSum;
 			if (!charging && getFrameCount() > 200
 					&& getFrameCount() % (getFrameCount() / 100 % 3 == 0 ? 5 : 20) == 0) {
-				float[] out = GameMath.projectileSpeed(bossCenterX, bossCenterY, playerX, playerY, bossHealth < 25 ? 10 : 5);
+				float[] out = GameMath.projectileSpeed(bossCenterX, bossCenterY, playerX, playerY, bossHealth < 25 ? 7 : 5);
 				particles.add(new Laser(bossCenterX, bossCenterY, out[0], out[1]));
 			}
 		} else {
@@ -215,7 +215,7 @@ public class GameDemo extends GamePanel {
 
 			if (charging) {
 				// charging towards player
-				float[] track = GameMath.projectileSpeed(getX(), getY(), playerX, playerY, bossHealth < 15 ? 0.3f : 0.1f);
+				float[] track = GameMath.projectileSpeed(getX(), getY(), playerX, playerY, bossHealth < 15 ? 0.2f : 0.1f);
 				setDX(getDX() + track[0]);
 				setDY(getDY() + track[1]);
 			} else {
@@ -334,7 +334,7 @@ public class GameDemo extends GamePanel {
 			}
 			if (GameMath.distance(bossCenterX, bossCenterY, getX(), getY()) < 30) {
 				particles.remove(this);
-				bossHealth -= bossHealth < 10 ? 2f : 2.5f;
+				bossHealth -= 2.5f;
 				if (bossHealth <= 0) {
 					won = true;
 					gameStarted = false;
