@@ -1,4 +1,4 @@
-#Game Framework Demo
+# Game Framework Demo
 
 This is the first project I've used git with.
 It was built in Eclipse with JDK 8 and uses the stock Java Graphics and Java Swing Libraries.
