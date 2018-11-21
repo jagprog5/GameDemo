@@ -42,7 +42,7 @@ public class DispersePanel extends GamePanel {
 			startX = null;
 			startY = null;
 		}
-		for (int i = 0; i < particles.size(); i++) {
+		for (int i = particles.size() - 1; i > -1; i--) {
 			particles.get(i).updateMechanics();
 		}
 	}

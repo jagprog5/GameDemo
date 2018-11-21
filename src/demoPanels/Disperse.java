@@ -19,8 +19,12 @@ class Disperse extends GraphicalObject {
 	
 	public static final float STARTSIZE = 50;
 	public static final float DRIFT = 2;
+	public static final float COLORDRIFT = 0.0001f;
 	private ArrayList<GraphicalObject> arrayReference;
 	private float size;
+	float r;
+	float g;
+	float b;
 
 	/**
 	 * If using this constructor, manually set properties.
@@ -39,6 +43,9 @@ class Disperse extends GraphicalObject {
 		super(x, y, dx, dy);
 		this.size = size;
 		arrayReference = ar;
+		r = GameMath.random.nextFloat();
+		g = GameMath.random.nextFloat();
+		b = GameMath.random.nextFloat();
 	}
 	
 	public void breakUp() {
@@ -86,11 +93,20 @@ class Disperse extends GraphicalObject {
 		d.setX(getX());
 		d.setY(getY());
 		d.arrayReference = arrayReference;
+		d.r = GameMath.nextFloat(-COLORDRIFT, COLORDRIFT) + r;
+		if (d.r < 0) d.r = 0;
+		if (d.r > 1) d.r = 1;
+		d.g += GameMath.nextFloat(-COLORDRIFT, COLORDRIFT) + g;
+		if (d.g < 0) d.g = 0;
+		if (d.g > 1) d.g = 1;
+		d.b += GameMath.nextFloat(-COLORDRIFT, COLORDRIFT) + b;
+		if (d.b < 0) d.b = 0;
+		if (d.b > 1) d.b = 1;
 	}
 
 	@Override
 	public void draw(Graphics2D g2d) {
-		g2d.setColor(new Color(1, 1, 1, size / STARTSIZE));
+		g2d.setColor(new Color(r, g, b, size / STARTSIZE));
 		g2d.fill(new Ellipse2D.Float(getX(), getY(), size, size));
 	}
 }
