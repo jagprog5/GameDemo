@@ -30,7 +30,8 @@ public class GUI {
 	public GUI() {
 		JFrame frame = new JFrame();
 		frame.setTitle("Simple Game Mechanics Demo");
-		frame.setSize(new Dimension(800, 600));
+		// 16/7 aspect ratio within 1 pixel
+		frame.setSize(new Dimension(1067, 600));
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		centerFrame(frame);
@@ -45,35 +46,36 @@ public class GUI {
 				return new Dimension(super.getPreferredSize().width, 30);
 			}
 		};
-		
+
 		selection.add(new SwitcherButton("Mouse & Key Input", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				replaceContent("Try the mouse buttons, scroll wheel, and keyboard.", new MouseKeyInputDisplay().start());
+				replaceContent("Try the mouse buttons, scroll wheel, and keyboard.",
+						new MouseKeyInputDisplay().start());
 			}
 		}));
-		
+
 		selection.add(new SwitcherButton("Dispersion Particle", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				replaceContent("Click, drag, and release!", new DispersePanel().start());
 			}
 		}));
-		
+
 		selection.add(new SwitcherButton("Dot Sim", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				replaceContent("Sit back, and watch!", new DotSimulator().start());
 			}
 		}));
-		
+
 		selection.add(new SwitcherButton("Game Demo", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				replaceContent("Mouse to move; WASD or arrow keys to shoot.", new GameDemo().start());
 			}
 		}));
-		
+
 		// With GridLayout, buttons will be added on same row and expand width.
 		selection.setLayout(new GridLayout());
 
@@ -101,7 +103,7 @@ public class GUI {
 	/**
 	 * @param bottomMessage
 	 *            Sets the description message on the bottom panel, <br>
-	 * 			briefly describing how to use each demo.
+	 *            briefly describing how to use each demo.
 	 * @param panel
 	 *            The panel, AnimationPanel, or GamePanel to add.<br>
 	 *            The function will handle starting the timer loop and giving it
