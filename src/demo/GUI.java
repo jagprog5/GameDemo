@@ -30,7 +30,7 @@ public class GUI {
 	public GUI() {
 		JFrame frame = new JFrame();
 		frame.setTitle("Simple Game Mechanics Demo");
-		// 16/7 aspect ratio within 1 pixel
+		// 16/9 aspect ratio within 1 pixel
 		frame.setSize(new Dimension(1067, 600));
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
