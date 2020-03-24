@@ -1,4 +1,4 @@
-[![Demo Video](https://github.com/olta8/GameFrameworkDemo/blob/master/src/Assets/DemoThumbnail.png)](http://www.youtube.com/watch?v=X63V_5YDLC0 "Click to watch the demo")
+[![Demo Video](https://github.com/jagprog5/GameFrameworkDemo/blob/master/src/Assets/DemoThumbnail.png)](http://www.youtube.com/watch?v=X63V_5YDLC0 "Click to watch the demo")
 
 <!--- Above file links to demo video. Displayed image is contained within the project itself. --->
 
