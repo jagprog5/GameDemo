@@ -2,6 +2,8 @@
 
 <!--- Above file links to demo video. Displayed image is contained within the project itself. --->
 
+☝️ click the image to watch the demo
+
 # Game Framework Demo
 
 Uses stock Java libraries, including Graphics2D and Swing.
